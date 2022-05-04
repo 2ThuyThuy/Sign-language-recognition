@@ -1,7 +1,9 @@
 import cv2
 import mediapipe as mp
 import math
-
+from keras.models import load_model 
+from PIL import Image
+import numpy as np
 
 class HandDetect:
 
@@ -17,15 +19,11 @@ class HandDetect:
         self.hands = self.mpHands.Hands(static_image_mode=self.mode, max_num_hands=self.maxHands,
                                         min_detection_confidence=self.detectionCon,
                                         min_tracking_confidence=self.minTrackCon)
+        self.model = load_model('my_model.h5')
+        self.labelSign = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'nothing', 'space']
 
 
     def findHands(self, img, draw=True, flipType=True):
-        """
-        Finds hands in a BGR image.
-        :param img: Image to find the hands in.
-        :param draw: Flag to draw the output on the image.
-        :return: Image with or without drawings
-        """
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
         allHands = []
@@ -64,16 +62,33 @@ class HandDetect:
                     myHand["type"] = handType.classification[0].label
                 allHands.append(myHand)
 
-                ## draw
-                if draw:
-                    #self.mpDraw.draw_landmarks(img, handLms,self.mpHands.HAND_CONNECTIONS)
+
+
+                if allHands :
                     cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20),
                                   (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20),
                                   (255, 0, 255), 2)
-                    cv2.putText(img, myHand["type"], (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,
-                                2, (255, 0, 255), 2)
-        if len(allHands) == 0:
-                    print("Không có tay")
+                    pre_hand = img[bbox[1] - 20: bbox[1] + bbox[3] + 20,bbox[0] - 20:bbox[0] + bbox[2] + 20]
+                   
+                    try :
+                        pre_hand = cv2.resize(pre_hand,(224,224))
+                        imgHand = Image.fromarray(pre_hand, 'RGB')
+                        imgHandArray = np.array(imgHand)
+                        imgHandArray = np.expand_dims(imgHandArray, axis=0)
+                        pred = self.model.predict(imgHandArray)[0]
+                        labelPred = self.labelSign[pred.argmax()]
+                    except:
+                        labelPred='Lỗi'
+                    # cv2.putText(img, labelPred, (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,2, (255, 0, 255), 2)
+                    cv2.putText(img,labelPred, (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,2, (255, 0, 255), 2)
+                ## draw
+                if draw:
+                    pass
+                    #self.mpDraw.draw_landmarks(img, handLms,self.mpHands.HAND_CONNECTIONS)
+                    # cv2.putText(img, myHand["type"], (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,
+                    #             2, (255, 0, 255), 2)
+        # if len(allHands) == 0:
+        #             print("Không có tay")
 
         if draw:
             return allHands, img

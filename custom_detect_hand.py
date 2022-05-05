@@ -35,6 +35,7 @@ class HandDetect:
                 mylmList = []
                 xList = []
                 yList = []
+
                 for id, lm in enumerate(handLms.landmark):
                     px, py, pz = int(lm.x * w), int(lm.y * h), int(lm.z * w)
                     mylmList.append([px, py, pz])

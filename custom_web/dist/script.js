@@ -52,7 +52,7 @@ const spinner = document.querySelector('.loading');
 spinner.ontransitionend = () => {
     spinner.style.display = 'none';
 };
-const landmarkContainer = document.getElementsByClassName('landmark-grid-container')[0];
+// const landmarkContainer = document.getElementsByClassName('landmark-grid-container')[0];
 
 // const grid = new controls3d.LandmarkGrid(landmarkContainer, {
 //     connectionColor: 0xCCCCCC,
@@ -98,9 +98,6 @@ function onResults(results) {
 
             var ymax = Math.max(...landmarks.map(o => o.y*h))
            
-
-            
-            
             canvasCtx.lineWidth = "3";
             canvasCtx.strokeStyle = "violet";
             
@@ -158,7 +155,7 @@ new controls
     minTrackingConfidence: 0.5
 })
     .add([
-    new controls.StaticText({ title: 'Chỉ cái j đấy đi' }),
+    new controls.StaticText({ title: 'Menu' }),
     fpsControl,
     new controls.Toggle({ title: 'Selfie Mode', field: 'selfieMode' }),
     new controls.SourcePicker({
@@ -184,23 +181,23 @@ new controls
         range: [1, 4],
         step: 1
     }),
-    new controls.Slider({
-        title: 'Model Complexity',
-        field: 'modelComplexity',
-        discrete: ['Lite', 'Full'],
-    }),
-    new controls.Slider({
-        title: 'Min Detection Confidence',
-        field: 'minDetectionConfidence',
-        range: [0, 1],
-        step: 0.01
-    }),
-    new controls.Slider({
-        title: 'Min Tracking Confidence',
-        field: 'minTrackingConfidence',
-        range: [0, 1],
-        step: 0.01
-    }),
+    // new controls.Slider({
+    //     title: 'Model Complexity',
+    //     field: 'modelComplexity',
+    //     discrete: ['Lite', 'Full'],
+    // }),
+    // new controls.Slider({
+    //     title: 'Min Detection Confidence',
+    //     field: 'minDetectionConfidence',
+    //     range: [0, 1],
+    //     step: 0.01
+    // }),
+    // new controls.Slider({
+    //     title: 'Min Tracking Confidence',
+    //     field: 'minTrackingConfidence',
+    //     range: [0, 1],
+    //     step: 0.01
+    // }),
 ])
     .on(x => {
     const options = x;

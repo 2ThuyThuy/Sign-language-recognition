@@ -1,0 +1,1 @@
+py -m PyQt5.uic.pyuic app_signLL.ui -o main.py -x

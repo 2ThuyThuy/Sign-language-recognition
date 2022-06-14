@@ -6,7 +6,6 @@ from PIL import Image
 import numpy as np
 
 class HandDetect:
-
     def __init__(self, mode=False, maxHands=2, detectionCon=0.5, minTrackCon=0.5):
         self.mpHands = mp.solutions.hands
         #self.mpDraw = mp.solutions.drawing_utils
@@ -21,7 +20,7 @@ class HandDetect:
                                         min_tracking_confidence=self.minTrackCon)
         self.model = load_model('my_model.h5')
         self.labelSign = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'nothing', 'space']
-
+        
 
     def findHands(self, img, draw=True, flipType=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -77,7 +76,10 @@ class HandDetect:
                         imgHandArray = np.array(imgHand)
                         imgHandArray = np.expand_dims(imgHandArray, axis=0)
                         pred = self.model.predict(imgHandArray)[0]
+                        print(pred)
                         labelPred = self.labelSign[pred.argmax()]
+                        #labelPred += str(100*pred[pred.argmax()])+"%"
+                     
                     except:
                         labelPred='Lỗi'
                     # cv2.putText(img, labelPred, (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,2, (255, 0, 255), 2)
@@ -107,8 +109,7 @@ def main():
         hands, img = detector.findHands(img)
        
         cv2.imshow("Image", img)
-        cv2.waitKey(1)
-
-
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 if __name__ == "__main__":
     main()
